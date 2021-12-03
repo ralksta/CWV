@@ -11,7 +11,9 @@ import sys
 import time
 import json
 from datetime import date
+from urllib.parse import urlparse
 import requests
+import constants
 
 #HEADER
 headers = {
@@ -19,7 +21,7 @@ headers = {
 }
 #APIKEY
 params = (
-    ('key', 'AIzaSyDluRhIS4UgY4wDF4kB_Lgmjd6oc1tnHwQ'),
+    ('key',constants.crux_api_key),
 )
 
 class Audit:
@@ -52,9 +54,12 @@ class Audit:
 
         #send request to domain to check for redirects
         try:
-            responses = requests.get(self.domain_input, timeout=10)
+            responses = requests.get(self.domain_input, timeout=50)
             #IF response url is different - overwrite input url
             if responses.url != self.domain_input:
+                parsed_url = urlparse(response.url) ####'TESTING'
+                print(parsed_url['scheme'],parsed_url['hostname'])
+                quit()
                 self.domain_input = responses.url
 
         except Exception:
