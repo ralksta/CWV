@@ -59,7 +59,6 @@ class Audit:
             if responses.url != self.domain_input:
                 parsed_url = urlparse(response.url) ####'TESTING'
                 print(parsed_url['scheme'],parsed_url['hostname'])
-                quit()
                 self.domain_input = responses.url
 
         except Exception:
