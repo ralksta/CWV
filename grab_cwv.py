@@ -10,8 +10,9 @@ import csv
 import sys
 import time
 import json
+import re
 from datetime import date
-from urllib.parse import urlparse
+import os.path
 import requests
 import constants
 
@@ -26,7 +27,7 @@ params = (
 
 class Audit:
 
-    """ An Audit object runs the CWV Check.
+    """ An Audit object runs the CWV Checks.
 
     Typical usage example:
 
@@ -40,25 +41,32 @@ class Audit:
     def __init__(self):
         self.dataset = None
         self.api_origin_str = None
-        self.domain_input: string
+        self.domain_input= None
         self.output_csv_name = "cwvchecks.csv"
         self.domain_list = []
 
+        #if output csv not exist yet, write csv header once
+        if not os.path.isfile(self.output_csv_name):
+            self.write_output_csv_header()
+
 
     def prep_url(self,domain_input):
-        """Checks input domain for redirects & prepares string for apicall.  """
 
+        """Checks input domain for redirects & prepares string for apicall.  """
         self.domain_input = domain_input
 
-        print("*** Check URL", domain_input, "for redirects ***")
+        #if domain doesn't end with trailing slash, add one
+        if not re.findall(r'\/$',self.domain_input):
+            self.domain_input = self.domain_input + "/"
+
+        print("*** Check URL", self.domain_input, "for redirects ***")
 
         #send request to domain to check for redirects
         try:
             responses = requests.get(self.domain_input, timeout=50)
             #IF response url is different - overwrite input url
             if responses.url != self.domain_input:
-                parsed_url = urlparse(response.url) ####'TESTING'
-                print(parsed_url['scheme'],parsed_url['hostname'])
+                print("*** URL redirected from ",self.domain_input,"to",responses.url,"***")
                 self.domain_input = responses.url
 
         except Exception:
@@ -134,7 +142,7 @@ class Audit:
                 writer.writerow(cwv_text)
 
     def write_output_csv_header(self):
-        """ Writes CSV Header Line - Currently not in use. """
+        """ Writes CSV Header for inital file creation  """
 
         #Output to CSV
         with open(self.output_csv_name, 'a', encoding='utf-8') as csv_output_file:
@@ -171,4 +179,4 @@ if len(MyAudit.domain_list) > 0:
         MyAudit.prep_url(i)
         MyAudit.get_domain_audit()
         time.sleep(0.5)
-    print("|||||| Core Web Vitals written to: cwvchecks.csv ||||||")
+    print("|||||| Core Web Vitals written to:", MyAudit.output_csv_name, "||||||")
