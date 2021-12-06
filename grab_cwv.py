@@ -59,18 +59,18 @@ class Audit:
         if not re.findall(r'\/$',self.domain_input):
             self.domain_input = self.domain_input + "/"
 
-        print("*** Check URL", self.domain_input, "for redirects ***")
+        print("***", self.domain_input, "-> checking for redirects ***")
 
         #send request to domain to check for redirects
         try:
             responses = requests.get(self.domain_input, timeout=50)
             #IF response url is different - overwrite input url
             if responses.url != self.domain_input:
-                print("*** URL redirected from ",self.domain_input,"to",responses.url,"***")
+                print("***",self.domain_input, "-> redirected to",responses.url,"***")
                 self.domain_input = responses.url
 
         except Exception:
-            print("*** Checking for redirects failed -trying with input URL ***")
+            print("*** Checking for redirects failed -> continuing with input URL ***")
 
         #build string for crux api
         self.api_origin_str = '{"origin": "'+self.domain_input+'"}'
@@ -85,7 +85,7 @@ class Audit:
         """Calls CRUX API and prepares cwv insights for output."""
 
 
-        print("*** Collecting Core Web Vitals Data for:", self.domain_input,"***")
+        print("***", self.domain_input,"-> collecting Core Web Vitals Data ***")
         response = requests.post('https://chromeuxreport.googleapis.com/v1/records:queryRecord'
                                 , headers=headers, params=params, data=self.dataset[1])
 
@@ -140,6 +140,7 @@ class Audit:
                             ,cls["value"]]
 
                 writer.writerow(cwv_text)
+                print("***", final_url,"-> writing Core Web Vitals to csv ***\n")
 
     def write_output_csv_header(self):
         """ Writes CSV Header for inital file creation  """
