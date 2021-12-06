@@ -141,6 +141,9 @@ class Audit:
 
                 writer.writerow(cwv_text)
                 print("***", final_url,"-> writing Core Web Vitals to csv ***\n")
+        else:
+            print("Error:",response)
+
 
     def write_output_csv_header(self):
         """ Writes CSV Header for inital file creation  """
@@ -160,10 +163,10 @@ class Audit:
 
             writer.writerow(cwv_header)
 
-    def open_input_csv(self,input_csv):
+    def open_input_csv(self,input_user):
         """ open CSV from commandline."""
 
-        csv_file = input_csv[1]
+        csv_file = input_user[1]
 
         #Read Rows for Domains
         with open(csv_file,'r', encoding='utf-8') as csv_file:
