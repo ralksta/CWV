@@ -56,14 +56,15 @@ class Audit:
         self.domain_input = domain_input
 
         #if domain doesn't end with trailing slash, add one
-        if not re.findall(r'\/$',self.domain_input):
-            self.domain_input = self.domain_input + "/"
+        if not self.domain_input.endswith("/"):
+            self.domain_input += "/"
 
         print("***", self.domain_input, "-> checking for redirects ***")
 
         #send request to domain to check for redirects
         try:
             responses = requests.get(self.domain_input, timeout=50)
+
             #IF response url is different - overwrite input url
             if responses.url != self.domain_input:
                 print("***",self.domain_input, "-> redirected to",responses.url,"***")
