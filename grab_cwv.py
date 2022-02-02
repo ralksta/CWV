@@ -100,7 +100,7 @@ class Audit:
                 final_url = j_data['record']['key']['origin']
                 lcp_raw = j_data['record']['metrics']['largest_contentful_paint']
                 fid_raw = j_data['record']['metrics']['first_input_delay']
-                cls_raw = j_data['record']['metrics']['first_input_delay']
+                cls_raw = j_data['record']['metrics']['cumulative_layout_shift']
 
             lcp = {
                   "p75": lcp_raw['percentiles']['p75'],
